@@ -1,0 +1,1210 @@
+:root {
+    --primary-color: #2c7a7b;
+    --primary-dark: #2a6e6f;
+    --secondary-color: #ed8936;
+    --success-color: #48bb78;
+    --error-color: #f56565;
+    --warning-color: #ed8936;
+    --text-dark: #2d3748;
+    --text-light: #718096;
+    --bg-light: #f7fafc;
+    --bg-white: #ffffff;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+    --border-radius: 12px;
+}
+
+/* Hide batches table by default for cleaner main dashboard */
+.batches-section .table-container {
+    display: none;
+}
+
+/* Show batches table only when explicitly requested */
+.batches-section.show-batches .table-container {
+    display: block;
+}
+
+/* Adjust layout when batches table is hidden */
+.batches-section:not(.show-batches) {
+    min-height: auto;
+}
+
+.batches-section:not(.show-batches) .selected-batch-details {
+    margin-bottom: 2rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.dashboard-header {
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.header-title h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.header-title p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stored-batches-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stored-batches-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 122, 123, 0.3);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+}
+
+/* Main Content */
+.dashboard-main {
+    flex: 1;
+    padding: 2rem;
+}
+
+.dashboard-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sections */
+.submit-batch-section,
+.batches-section,
+.visualizations-section {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.submit-batch-section {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Submitted Batch Section Styles */
+.submitted-batch-section {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.submitted-batch-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid var(--border-color);
+}
+
+.success-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    color: #166534;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.success-indicator i {
+    font-size: 1.25rem;
+    color: #22c55e;
+}
+
+.batch-details-table {
+    display: none; /* Hide old grid layout */
+}
+
+/* Submitted Batch Table Container */
+.submitted-batches-table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.submitted-batches-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-white);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.submitted-batches-table-container thead {
+    background: var(--bg-light);
+}
+
+.submitted-batches-table-container th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.submitted-batches-table-container td {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.submitted-batches-table-container tbody tr:hover {
+    background: var(--bg-light);
+}
+
+.submitted-batches-table-container tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table column widths for consistency */
+.submitted-batches-table-container th:nth-child(1),
+.submitted-batches-table-container td:nth-child(1) { width: 80px; } /* Batch ID */
+.submitted-batches-table-container th:nth-child(2),
+.submitted-batches-table-container td:nth-child(2) { width: 120px; } /* Crop */
+.submitted-batches-table-container th:nth-child(3),
+.submitted-batches-table-container td:nth-child(3) { width: 100px; } /* Quantity */
+.submitted-batches-table-container th:nth-child(4),
+.submitted-batches-table-container td:nth-child(4) { width: 110px; } /* Harvest Date */
+.submitted-batches-table-container th:nth-child(5),
+.submitted-batches-table-container td:nth-child(5) { width: 90px; text-align: center; } /* Days Since Harvest */
+.submitted-batches-table-container th:nth-child(6),
+.submitted-batches-table-container td:nth-child(6) { width: 100px; text-align: center; } /* Freshness */
+.submitted-batches-table-container th:nth-child(7),
+.submitted-batches-table-container td:nth-child(7) { width: 120px; } /* Risk Status */
+.submitted-batches-table-container th:nth-child(8),
+.submitted-batches-table-container td:nth-child(8) { width: 200px; max-width: 200px; } /* Alerts */
+
+/* Alert badges in submitted batch table */
+.submitted-batches-table-container .alert-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin: 2px;
+    white-space: normal;
+    line-height: 1.3;
+}
+
+.submitted-batches-table-container .alert-badge.high {
+    background: #ef4444;
+    color: white;
+}
+
+.submitted-batches-table-container .alert-badge.medium {
+    background: #f59e0b;
+    color: white;
+}
+
+.submitted-batches-table-container .alert-badge.low {
+    background: #22c55e;
+    color: white;
+}
+
+.submitted-batches-table-container .alert-badge.delivered {
+    background: #3b82f6; /* Blue for delivered status */
+    color: white;
+}
+
+.submitted-batches-table-container .alert-badge.pickup-completed {
+    background: #14b8a6; /* Teal/Dark Cyan for pickup completed */
+    color: white;
+}
+
+.submitted-batches-table-container .alert-badge.pickup-requested {
+    background: #f59e0b; /* Amber/Yellow for pickup requested */
+    color: white;
+}
+
+/* Risk status badges in submitted batch table */
+.submitted-batches-table-container .risk-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.submitted-batches-table-container .risk-badge.high {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.submitted-batches-table-container .risk-badge.safe {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #86efac;
+}
+
+.submitted-batches-table-container .risk-badge.medium {
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+/* Selected row highlighting */
+.batch-row-selected {
+    background: var(--bg-light) !important;
+    border-left: 4px solid var(--primary-color);
+    cursor: pointer;
+}
+
+.submitted-batches-table-container tbody tr:hover,
+.batches-table tbody tr:hover {
+    background: var(--bg-light);
+    cursor: pointer;
+}
+
+.submitted-batches-table-container tbody tr.batch-row-selected:hover,
+.batches-table tbody tr.batch-row-selected:hover {
+    background: #e6f3f5;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-badge.success {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+/* Responsive Design for Submitted Batch Section */
+@media (max-width: 768px) {
+    .submitted-batch-card {
+        padding: 1.5rem;
+    }
+    
+    .success-indicator {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .submitted-batches-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .submitted-batches-table-container th,
+    .submitted-batches-table-container td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .submitted-batches-table-container .alert-badge {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+    
+    .submitted-batches-table-container .risk-badge {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}
+
+.batches-section {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.visualizations-section {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.section-header-left h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-header-left h2 i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.section-header-left p {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.section-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--bg-white);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Form Styles */
+.batch-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label i {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    background: var(--bg-white);
+    transition: all 0.2s ease;
+    color: var(--text-dark);
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.input-wrapper select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(44, 122, 123, 0.1);
+}
+
+.input-wrapper input::placeholder {
+    color: var(--text-light);
+}
+
+/* Ensure all form groups have consistent width */
+.form-group {
+width: 100%;
+max-width: 100%;
+}
+
+/* Quantity Group */
+.quantity-group {
+display: grid;
+grid-template-columns: 3fr 1fr;
+gap: 0.5rem;
+align-items: stretch;
+}
+
+/* Unit Wrapper Styling */
+.unit-wrapper input {
+background: var(--bg-light) !important;
+border-color: var(--border-color) !important;
+color: var(--text-dark);
+font-weight: 500;
+text-align: center;
+cursor: default;
+transition: all 0.2s ease;
+}
+
+.unit-wrapper input:hover {
+border-color: var(--primary-color);
+}
+
+.unit-wrapper input:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(44, 122, 123, 0.1);
+}
+
+/* Ensure quantity and unit inputs have same height */
+.quantity-group .input-wrapper input {
+height: 48px;
+}
+
+/* Quantity Input Wrapper */
+.quantity-input-wrapper {
+position: relative;
+display: flex;
+align-items: center;
+}
+
+.quantity-input-wrapper input {
+width: 100%;
+height: 48px;
+padding: 0 3rem 0 1rem;
+border: 1px solid var(--border-color);
+border-radius: 8px;
+font-size: 0.875rem;
+background: var(--bg-white);
+transition: all 0.2s ease;
+color: var(--text-dark);
+box-sizing: border-box;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+}
+
+.quantity-input-wrapper input:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(44, 122, 123, 0.1);
+}
+
+.unit-suffix {
+position: absolute;
+right: 1rem;
+top: 50%;
+transform: translateY(-50%);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--text-light);
+pointer-events: none;
+user-select: none;
+}
+
+.date-group input[type="date"]:hover {
+    border-color: var(--primary-color);
+}
+
+/* City Group */
+.city-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.maps-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-light);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    height: 48px;
+}
+
+.maps-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Submit Button */
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+    height: 52px;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(44, 122, 123, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Form Messages */
+.form-message {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: none;
+}
+
+.form-message.error {
+    background: #fed7d7;
+    color: var(--error-color);
+    border: 1px solid #feb2b2;
+    display: block;
+}
+
+.form-message.success {
+    background: #c6f6d5;
+    color: var(--success-color);
+    border: 1px solid #9ae6b4;
+    display: block;
+}
+
+/* Batches Section */
+.selected-batch-details {
+    margin-bottom: 2rem;
+}
+
+.selected-batch-details h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-light);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.batch-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.detail-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-card h4 i {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.detail-content {
+    color: var(--text-dark);
+    font-size: 0.875rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.batch-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn.primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.action-btn.secondary {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+
+.action-btn.secondary:hover {
+    background: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-light) !important;
+    color: var(--text-light) !important;
+    border: 1px solid var(--border-color) !important;
+    transform: none !important;
+    pointer-events: none;
+}
+
+.action-btn:disabled:hover {
+    background: var(--bg-light) !important;
+    transform: none !important;
+}
+
+.action-btn.force-disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: var(--bg-light) !important;
+    color: var(--text-light) !important;
+    border: 1px solid var(--border-color) !important;
+    transform: none !important;
+    pointer-events: none !important;
+    position: relative;
+}
+
+.action-btn.force-disabled:hover {
+    background: var(--bg-light) !important;
+    transform: none !important;
+    opacity: 0.5 !important;
+}
+
+.action-btn.force-disabled::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 10;
+}
+
+/* Table */
+.table-container {
+    background: var(--bg-white);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.batches-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.batches-table th,
+.batches-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.batches-table th {
+    background: var(--bg-light);
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+}
+
+.batches-table td {
+    font-size: 0.875rem;
+    color: var(--text-dark);
+}
+
+.batches-table tr:hover {
+    background: var(--bg-light);
+}
+
+/* Stored Batches Table Styles */
+.stored-batches-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stored-batches-table th {
+    background: var(--bg-light);
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.stored-batches-table td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    vertical-align: top;
+    line-height: 1.4;
+}
+
+.stored-batches-table tr:last-child td {
+    border-bottom: none;
+}
+
+.stored-batches-table tr:hover {
+    background: var(--bg-light);
+}
+
+/* Column width distribution for stored batches */
+.stored-batches-table th:nth-child(1), /* Batch ID */
+.stored-batches-table td:nth-child(1) {
+    width: 80px;
+}
+
+.stored-batches-table th:nth-child(2), /* Crop */
+.stored-batches-table td:nth-child(2) {
+    width: 120px;
+}
+
+.stored-batches-table th:nth-child(3), /* Quantity */
+.stored-batches-table td:nth-child(3) {
+    width: 100px;
+}
+
+.stored-batches-table th:nth-child(4), /* Harvest Date */
+.stored-batches-table td:nth-child(4) {
+    width: 110px;
+}
+
+.stored-batches-table th:nth-child(5), /* Days Since Harvest */
+.stored-batches-table td:nth-child(5) {
+    width: 90px;
+    text-align: center;
+}
+
+.stored-batches-table th:nth-child(6), /* Freshness */
+.stored-batches-table td:nth-child(6) {
+    width: 100px;
+    text-align: center;
+}
+
+.stored-batches-table th:nth-child(7), /* Farmer Risk Status */
+.stored-batches-table td:nth-child(7) {
+    width: 120px;
+}
+
+.stored-batches-table th:nth-child(8), /* Alerts */
+.stored-batches-table td:nth-child(8) {
+    width: 200px;
+    max-width: 200px;
+}
+
+/* Alert badges for stored batches */
+.stored-batches-table .alert-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.stored-batches-table .alert-badge.high {
+    background: var(--error-color);
+}
+
+.stored-batches-table .alert-badge.medium {
+    background: var(--warning-color);
+}
+
+.stored-batches-table .alert-badge.low {
+    background: var(--success-color);
+}
+
+.stored-batches-table .alert-badge.delivered {
+    background: #3b82f6; /* Blue for delivered status */
+}
+
+.stored-batches-table .alert-badge.pickup-completed {
+    background: #14b8a6; /* Teal/Dark Cyan for pickup completed */
+}
+
+.stored-batches-table .alert-badge.pickup-requested {
+    background: #f59e0b; /* Amber/Yellow for pickup requested */
+}
+
+/* Risk status badges */
+.stored-batches-table .risk-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+}
+
+.stored-batches-table .risk-badge.high {
+    background: var(--error-color);
+}
+
+.stored-batches-table .risk-badge.safe {
+    background: var(--success-color);
+}
+
+.stored-batches-table .risk-badge.medium {
+    background: var(--warning-color);
+}
+
+/* Visualizations */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.chart-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.chart-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-card h3 i {
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-left {
+        order: 2;
+    }
+
+    .header-right {
+        order: 1;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dashboard-main {
+        padding: 1rem;
+    }
+
+    .submit-batch-section,
+    .batches-section,
+    .visualizations-section {
+        padding: 1.5rem;
+    }
+
+    .batch-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quantity-group,
+    .city-group {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .batch-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-main {
+        padding: 0.5rem;
+    }
+
+    .submit-batch-section,
+    .batches-section,
+    .visualizations-section {
+        padding: 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .detail-card {
+        padding: 1rem;
+    }
+}
+
+/* Stored Batch Details Panel */
+.stored-batch-details {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.stored-batch-details h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stored-batch-details .batch-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stored-batch-details .detail-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+}
+
+.stored-batch-details .detail-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stored-batch-details .detail-card h4 i {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+}
+
+.stored-batch-details .detail-content {
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.stored-batch-details .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-light);
+    font-style: italic;
+    background: var(--bg-light);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .stored-batch-details .batch-details-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stored-batch-details {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+}

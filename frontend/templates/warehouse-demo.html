@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Warehouse Dropdown Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .warehouse-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .central-backup {
+            border-left: 4px solid #d63384;
+            background-color: #fff5f7;
+        }
+        .warehouse-option {
+            transition: all 0.3s ease;
+        }
+        .warehouse-option:hover {
+            background-color: #e9ecef;
+        }
+        .demo-section {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-section">
+            <h2 class="text-center mb-4">🏭 Dynamic Warehouse Selection System</h2>
+            <p class="text-muted text-center mb-4">
+                Select a city to see the nearest regional warehouses plus the central backup option
+            </p>
+
+            <form id="warehouseForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="citySelect" class="form-label">
+                            <strong>📍 Select City</strong>
+                        </label>
+                        <select class="form-select" id="citySelect" name="city" required>
+                            <option value="">Choose a city...</option>
+                        </select>
+                        <div class="form-text">Cities are grouped by region: North, South, East, West</div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="warehouseSelect" class="form-label">
+                            <strong>🏭 Select Warehouse</strong>
+                        </label>
+                        <select class="form-select" id="warehouseSelect" name="warehouse" disabled>
+                            <option value="">Select city first...</option>
+                        </select>
+                        <div class="form-text">Regional warehouses shown first, Central backup last</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary" onclick="showWarehouseDetails()">
+                            Show Warehouse Details
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            Reset Form
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="warehouseInfo" class="warehouse-info" style="display: none;">
+                <h5>📋 Selected Warehouse Information</h5>
+                <div id="warehouseDetails"></div>
+            </div>
+
+            <div class="mt-4">
+                <h5>🗺️ Region Mapping</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>🏛️ North:</strong>
+                        <ul class="small">
+                            <li>Delhi Warehouse</li>
+                            <li>Chandigarh Warehouse</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>🌴 South:</strong>
+                        <ul class="small">
+                            <li>Bengaluru Warehouse</li>
+                            <li>Hyderabad Warehouse</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>🌅 East:</strong>
+                        <ul class="small">
+                            <li>Kolkata Warehouse</li>
+                            <li>Bhubaneswar Warehouse</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>🌇 West:</strong>
+                        <ul class="small">
+                            <li>Mumbai Warehouse</li>
+                            <li>Ahmedabad Warehouse</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <strong>⭐ Central Backup:</strong> Nagpur Central Warehouse (Always available)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/warehouse-dropdown.js"></script>
+    <script>
+        function showWarehouseDetails() {
+            const details = window.warehouseDropdown.getSelectedWarehouseDetails();
+            const infoDiv = document.getElementById('warehouseInfo');
+            const detailsDiv = document.getElementById('warehouseDetails');
+            
+            if (!details) {
+                alert('Please select a warehouse first');
+                return;
+            }
+
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> ${details.name}</p>
+                        <p><strong>Capacity:</strong> ${details.capacity}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Specialization:</strong> ${details.specialization}</p>
+                        <p><strong>Central Backup:</strong> ${details.isCentralBackup ? 'Yes ⭐' : 'No'}</p>
+                    </div>
+                </div>
+            `;
+
+            if (details.isCentralBackup) {
+                html = `<div class="central-backup p-3 rounded">${html}</div>`;
+            }
+
+            detailsDiv.innerHTML = html;
+            infoDiv.style.display = 'block';
+        }
+
+        function resetForm() {
+            document.getElementById('warehouseForm').reset();
+            document.getElementById('warehouseInfo').style.display = 'none';
+            window.warehouseDropdown.reset();
+        }
+
+        // Add some visual feedback when warehouse changes
+        document.getElementById('warehouseSelect').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const infoDiv = document.getElementById('warehouseInfo');
+            
+            if (selectedOption.value && selectedOption.getAttribute('data-is-central-backup') === 'true') {
+                // Show info for central backup warehouse
+                showWarehouseDetails();
+            }
+        });
+    </script>
+</body>
+</html>

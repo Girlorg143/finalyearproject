@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: agri-supply-chain
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend/app.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agri-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.9.0
+
+databases:
+  - name: agri-db
+    databaseName: finalyear
+    user: agriuser

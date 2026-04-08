@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Dashboard - Agri Supply Chain Management</title>
+    <link rel="stylesheet" href="/static/css/warehouse.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <div class="header-title">
+                    <h1 id="warehouseHeader">Welcome to Warehouse</h1>
+                    <div class="subtitle-with-actions">
+                        <p id="welcomeMessage">Warehouse Dashboard</p>
+                        <div class="header-nav-actions">
+                            <button class="nav-action-btn" id="storedBatchesBtn" onclick="showStoredBatches()">
+                                Stored Batches
+                            </button>
+                            <button class="nav-action-btn" id="salvageBatchesBtn" onclick="showSalvageBatches()">
+                                Salvage Batches
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <span id="userInfo"></span>
+                <a href="/" onclick="localStorage.clear();" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-card">
+                <!-- Warehouse Environment Section -->
+                <section class="warehouse-section" id="warehouseEnvironmentSection">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-thermometer-half"></i>
+                            Warehouse Environment
+                        </h2>
+                        <p>Current environmental conditions and facility information</p>
+                    </div>
+                    <div class="environment-info">
+                        <div class="environment-column">
+                            <div class="environment-item">
+                                <i class="fas fa-building"></i>
+                                <div>
+                                    <span class="environment-label">Warehouse Name:</span>
+                                    <span class="environment-value" id="envWarehouseName"></span>
+                                </div>
+                            </div>
+                            <div class="environment-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <span class="environment-label">Region:</span>
+                                    <span class="environment-value" id="envRegion"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="environment-column">
+                            <div class="environment-item">
+                                <i class="fas fa-temperature-high"></i>
+                                <div>
+                                    <span class="environment-label">Current Temperature:</span>
+                                    <span class="environment-value" id="envTemp"></span>
+                                </div>
+                            </div>
+                            <div class="environment-item">
+                                <i class="fas fa-tint"></i>
+                                <div>
+                                    <span class="environment-label">Current Humidity:</span>
+                                    <span class="environment-value" id="envHum"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="warehouseMsg" class="msg"></div>
+                </section>
+
+                <!-- Incoming Batches Section -->
+                <section class="warehouse-section" id="incomingBatchesSection">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-truck-loading"></i>
+                            Incoming Batches
+                        </h2>
+                    </div>
+                    <table id="incomingBatches" class="warehouse-table"></table>
+                </section>
+
+                <!-- Stored Batches Section -->
+                <section class="warehouse-section" id="storedBatchesSection">
+                    <div class="section-header">
+                        <div class="section-header-left">
+                            <h2>
+                                <i class="fas fa-boxes"></i>
+                                Stored Batches
+                            </h2>
+                        </div>
+                        <div class="section-header-right">
+                            <button class="go-to-dashboard-btn" onclick="showNormalDashboard()">
+                                <i class="fas fa-arrow-left"></i>
+                                Go to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                    <table id="storedBatches" class="warehouse-table"></table>
+                </section>
+
+                <!-- Salvage Batches Section -->
+                <section class="warehouse-section" id="salvageBatchesSection">
+                    <div class="section-header">
+                        <div class="section-header-left">
+                            <h2>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Salvage Batches (Pending / Finalized)
+                            </h2>
+                            <p>Manage batches requiring special handling or salvage operations</p>
+                        </div>
+                        <div class="section-header-right">
+                            <button class="go-to-dashboard-btn" onclick="showNormalDashboard()">
+                                <i class="fas fa-arrow-left"></i>
+                                Go to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                    <table id="salvageBatches" class="warehouse-table"></table>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/warehouse.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Food Supply Chain</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Navigation Tabs */
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .nav-tab.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Section visibility */
+        .section-view {
+            display: none;
+        }
+
+        .section-view.active {
+            display: block;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-content h3 {
+            margin: 0 0 4px;
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .card-value {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .card-content small {
+            display: block;
+            margin-top: 4px;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Visualizations */
+        .viz-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .viz-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .viz-card h3 {
+            margin: 0 0 15px;
+            font-size: 16px;
+            color: #374151;
+        }
+
+        .viz-card canvas {
+            max-height: 300px;
+        }
+
+        /* Alerts Panel */
+        .alerts-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .alerts-panel h2 {
+            margin: 0 0 20px;
+            font-size: 18px;
+            color: #111827;
+        }
+
+        .alert-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Section containers */
+        .section-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-container h2 {
+            margin: 0 0 20px;
+            font-size: 20px;
+            color: #111827;
+        }
+
+        /* Table styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            background: #ffffff;
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .data-table tr:hover td {
+            background: #f1f5f9;
+        }
+
+        /* Card icon backgrounds */
+        .card-total .card-icon { background: #dbeafe; }
+        .card-safe .card-icon { background: #d1fae5; }
+        .card-risk .card-icon { background: #fef3c7; }
+        .card-high .card-icon { background: #fee2e2; }
+        .card-shipments .card-icon { background: #e0e7ff; }
+
+        /* Insights Grid */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .insights-grid .viz-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ML Model Info */
+        .ml-model-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .ml-info-column h4 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .ml-info-column p {
+            margin: 0;
+            font-size: 16px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .ml-info-column ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #374151;
+        }
+
+        .ml-info-column li {
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .ml-model-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .viz-grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-nav {
+                flex-wrap: wrap;
+            }
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Check -->
+    <script>
+        const token = localStorage.getItem('access_token');
+        const userRole = localStorage.getItem('user_role');
+        if (!token || userRole !== 'admin') {
+            alert('Access denied. Admin required.');
+            window.location.href = '/';
+        }
+    </script>
+
+    <div class="admin-container">
+        <!-- HEADER -->
+        <header class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <button onclick="logout()" class="btn-logout">Logout</button>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="admin-nav">
+            <button class="nav-tab active" onclick="switchTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="switchTab('farmers')">Farmers</button>
+            <button class="nav-tab" onclick="switchTab('warehouses')">Warehouses</button>
+            <button class="nav-tab" onclick="switchTab('logistics')">Logistics</button>
+        </nav>
+
+        <!-- OVERVIEW SECTION -->
+        <div id="overview-section" class="section-view active">
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="card card-total">
+                    <div class="card-icon">📦</div>
+                    <div class="card-content">
+                        <h3>Total Batches</h3>
+                        <p class="card-value" id="totalBatches">-</p>
+                    </div>
+                </div>
+                <div class="card card-safe">
+                    <div class="card-icon">✅</div>
+                    <div class="card-content">
+                        <h3>Safe Batches</h3>
+                        <p class="card-value" id="safeBatches">-</p>
+                    </div>
+                </div>
+                <div class="card card-risk">
+                    <div class="card-icon">⚠️</div>
+                    <div class="card-content">
+                        <h3>Risk Batches</h3>
+                        <p class="card-value" id="riskBatches">-</p>
+                    </div>
+                </div>
+                <div class="card card-high">
+                    <div class="card-icon">🚨</div>
+                    <div class="card-content">
+                        <h3>High Risk Batches</h3>
+                        <p class="card-value" id="highBatches">-</p>
+                    </div>
+                </div>
+                <div class="card card-shipments">
+                    <div class="card-icon">🚚</div>
+                    <div class="card-content">
+                        <h3>Shipments</h3>
+                        <p class="card-value" id="totalShipments">-</p>
+                        <small id="shipmentDetails">Transit: - | Delivered: -</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts Panel -->
+            <section class="alerts-panel">
+                <h2>System Alerts</h2>
+                <div id="alertsContainer">
+                    <div class="alert-item alert-success">
+                        <span>✅</span>
+                        <span>No active alerts. System operating normally.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ML Model Insights -->
+            <section class="section-container">
+                <h2>ML Model Insights</h2>
+                <div class="ml-model-info">
+                    <div class="ml-info-column">
+                        <h4>Model</h4>
+                        <p>Random Forest</p>
+                    </div>
+                    <div class="ml-info-column">
+                        <h4>Features</h4>
+                        <ul>
+                            <li>Crop Type</li>
+                            <li>Temperature</li>
+                            <li>Humidity</li>
+                            <li>Time</li>
+                        </ul>
+                    </div>
+                    <div class="ml-info-column">
+                        <h4>Output</h4>
+                        <ul>
+                            <li>Shelf Life Prediction</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="viz-card full-width">
+                    <h3>Crop vs Shelf Life (Max Days)</h3>
+                    <canvas id="shelfLifeChart"></canvas>
+                </div>
+            </section>
+
+            <!-- All Batches Table -->
+            <section class="section-container">
+                <h2>All Batches</h2>
+                <div class="filters">
+                    <select id="filterCrop"><option value="">All Crops</option></select>
+                    <select id="filterRisk">
+                        <option value="">All Risk</option>
+                        <option value="SAFE">Safe</option>
+                        <option value="RISK">Risk</option>
+                        <option value="HIGH">High</option>
+                    </select>
+                    <button onclick="applyFilters()" class="btn-filter">Filter</button>
+                    <button onclick="resetFilters()" class="btn-reset">Reset</button>
+                </div>
+                <table id="batchesTable" class="data-table">
+                    <thead>
+                        <tr><th>ID</th><th>Crop</th><th>Freshness</th><th>Risk</th><th>Days Left</th><th>Status</th><th>Warehouse</th></tr>
+                    </thead>
+                    <tbody id="tableBody"><tr><td colspan="7">Loading...</td></tr></tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- FARMERS SECTION -->
+        <div id="farmers-section" class="section-view">
+            <section class="section-container">
+                <h2>Farmers</h2>
+                <div class="filters">
+                    <input type="text" id="farmerSearch" placeholder="Search farmer name...">
+                    <button onclick="loadFarmers()" class="btn-filter">Search</button>
+                </div>
+                <table id="farmersTable" class="data-table">
+                    <thead>
+                        <tr><th>Farmer Name</th><th>Total Batches</th><th>Active Batches</th><th>High Risk Batches</th></tr>
+                    </thead>
+                    <tbody id="farmersTableBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </section>
+            <!-- Visualizations -->
+            <section class="section-container">
+                <h2>Visualizations</h2>
+                <div class="viz-grid">
+                    <div class="viz-card">
+                        <h3>Freshness Distribution</h3>
+                        <canvas id="freshnessChart"></canvas>
+                    </div>
+                    <div class="viz-card">
+                        <h3>Risk Distribution</h3>
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                    <div class="viz-card">
+                        <h3>Crop-wise Analysis</h3>
+                        <canvas id="cropChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- WAREHOUSES SECTION -->
+        <div id="warehouses-section" class="section-view">
+            <section class="section-container">
+                <h2>Warehouses</h2>
+                <table id="warehousesTable" class="data-table">
+                    <thead>
+                        <tr><th>Warehouse Name</th><th>Location</th><th>Stored Batches</th><th>High Risk Batches</th></tr>
+                    </thead>
+                    <tbody id="warehousesTableBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </section>
+            <section class="section-container">
+                <h2>Warehouse Insights</h2>
+                <div class="insights-grid">
+                    <div class="viz-card">
+                        <h3>Freshness vs Temperature</h3>
+                        <canvas id="warehouseTempScatterChart"></canvas>
+                    </div>
+                    <div class="viz-card">
+                        <h3>Risk Distribution Across Warehouses</h3>
+                        <canvas id="warehouseRiskChart"></canvas>
+                    </div>
+                    <div class="viz-card full-width">
+                        <h3>Storage Freshness Trend</h3>
+                        <canvas id="warehouseTrendChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- LOGISTICS SECTION -->
+        <div id="logistics-section" class="section-view">
+            <section class="section-container">
+                <h2>Logistics & Shipments</h2>
+                <div class="filters">
+                    <select id="shipmentStatusFilter">
+                        <option value="">All Status</option>
+                        <option value="IN_TRANSIT">In Transit</option>
+                        <option value="DELIVERED">Delivered</option>
+                    </select>
+                    <button onclick="loadShipments()" class="btn-filter">Filter</button>
+                </div>
+                <table id="shipmentsTable" class="data-table">
+                    <thead>
+                        <tr><th>Shipment ID</th><th>Source</th><th>Destination</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="shipmentsTableBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </section>
+            <section class="section-container">
+                <h2>Logistics Insights</h2>
+                <div class="insights-grid">
+                    <div class="viz-card">
+                        <h3>Transit Freshness Trend</h3>
+                        <canvas id="transitFreshnessChart"></canvas>
+                    </div>
+                    <div class="viz-card">
+                        <h3>Delay vs Freshness Loss</h3>
+                        <canvas id="delayFreshnessChart"></canvas>
+                    </div>
+                    <div class="viz-card">
+                        <h3>Shipment Status Distribution</h3>
+                        <canvas id="shipmentStatusChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>

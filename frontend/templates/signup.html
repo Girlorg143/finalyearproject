@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Agri Supply Chain Management</title>
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Left Side - Illustration -->
+            <div class="auth-left">
+                <div class="auth-left-content">
+                    <div class="auth-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h1>Join Our Network</h1>
+                    <p>Become part of the revolutionary agricultural supply chain ecosystem</p>
+                    <div class="auth-features">
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Smart Analytics</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Platform</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <span>Professional Network</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Signup Form -->
+            <div class="auth-right">
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Join thousands of professionals in agricultural supply chain management</p>
+                </div>
+
+                <form id="signupForm" class="auth-form">
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-user"></i>
+                            Full Name *
+                        </label>
+                        <input type="text" name="name" id="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Email Address *
+                        </label>
+                        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Password *
+                        </label>
+                        <input type="password" name="password" id="password" placeholder="Create a strong password" required>
+                        <div class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </div>
+                    </div>
+
+                    <!-- Role Field -->
+                    <div class="form-group">
+                        <label for="role">
+                            <i class="fas fa-user-tag"></i>
+                            Select Role *
+                        </label>
+                        <select name="role" id="role" required onchange="toggleWarehouseField()">
+                            <option value="">Choose your role</option>
+                            <option value="farmer">🌾 Farmer</option>
+                            <option value="warehouse">🏭 Warehouse</option>
+                            <option value="logistics">🚚 Logistics</option>
+                            <option value="admin">⚙️ Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- Warehouse Location Field (Hidden by default) -->
+                    <div class="form-group" id="warehouseLocationGroup" style="display: none;">
+                        <label for="warehouse_location">
+                            <i class="fas fa-warehouse"></i>
+                            Warehouse Location *
+                        </label>
+                        <select name="warehouse_location" id="warehouse_location">
+                            <option value="">Select Warehouse Location</option>
+                        </select>
+                    </div>
+
+                    <!-- Signup Button -->
+                    <button type="submit" class="auth-button">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+
+                    <!-- Message Display -->
+                    <div id="signupMessage" class="auth-message" style="display: none;"></div>
+                </form>
+
+                <!-- Links -->
+                <div class="auth-links">
+                    <div class="auth-link-item">
+                        <span>Already have an account?</span>
+                        <a href="/login">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Toggle warehouse location field based on role selection
+        function toggleWarehouseField() {
+            const roleSelect = document.getElementById('role');
+            const warehouseGroup = document.getElementById('warehouseLocationGroup');
+            const warehouseSelect = document.getElementById('warehouse_location');
+            
+            if (roleSelect.value === 'warehouse') {
+                warehouseGroup.style.display = 'block';
+                warehouseSelect.required = true;
+                loadWarehouseLocations();
+            } else {
+                warehouseGroup.style.display = 'none';
+                warehouseSelect.required = false;
+                warehouseSelect.value = '';
+            }
+        }
+
+        // Load warehouse locations from API
+        async function loadWarehouseLocations() {
+            const warehouseSelect = document.getElementById('warehouse_location');
+            
+            try {
+                const response = await fetch('/api/auth/warehouse-locations');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    warehouseSelect.innerHTML = '<option value="">Select Warehouse Location</option>';
+                    result.warehouse_locations.forEach(location => {
+                        const option = document.createElement('option');
+                        option.value = location;
+                        option.textContent = location;
+                        warehouseSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Failed to load warehouse locations:', result.msg);
+                    // Fallback options
+                    warehouseSelect.innerHTML = '<option value="">Select Warehouse Location</option>' +
+                        '<option value="Delhi Warehouse">Delhi Warehouse</option>' +
+                        '<option value="Chandigarh Warehouse">Chandigarh Warehouse</option>' +
+                        '<option value="Bengaluru Warehouse">Bengaluru Warehouse</option>' +
+                        '<option value="Hyderabad Warehouse">Hyderabad Warehouse</option>' +
+                        '<option value="Kolkata Warehouse">Kolkata Warehouse</option>' +
+                        '<option value="Bhubaneswar Warehouse">Bhubaneswar Warehouse</option>' +
+                        '<option value="Mumbai Warehouse">Mumbai Warehouse</option>' +
+                        '<option value="Ahmedabad Warehouse">Ahmedabad Warehouse</option>' +
+                        '<option value="Nagpur Central Warehouse">Nagpur Central Warehouse</option>';
+                }
+            } catch (error) {
+                console.error('Error loading warehouse locations:', error);
+                // Fallback options
+                warehouseSelect.innerHTML = '<option value="">Select Warehouse Location</option>' +
+                    '<option value="Delhi Warehouse">Delhi Warehouse</option>' +
+                    '<option value="Chandigarh Warehouse">Chandigarh Warehouse</option>' +
+                    '<option value="Bengaluru Warehouse">Bengaluru Warehouse</option>' +
+                    '<option value="Hyderabad Warehouse">Hyderabad Warehouse</option>' +
+                    '<option value="Kolkata Warehouse">Kolkata Warehouse</option>' +
+                    '<option value="Bhubaneswar Warehouse">Bhubaneswar Warehouse</option>' +
+                    '<option value="Mumbai Warehouse">Mumbai Warehouse</option>' +
+                    '<option value="Ahmedabad Warehouse">Ahmedabad Warehouse</option>' +
+                    '<option value="Nagpur Central Warehouse">Nagpur Central Warehouse</option>';
+            }
+        }
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = e.target.querySelector('.auth-button');
+            const messageDiv = document.getElementById('signupMessage');
+            
+            // Show loading state
+            button.classList.add('loading');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            messageDiv.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role')
+            };
+            
+            // Add warehouse_location if warehouse role
+            if (data.role === 'warehouse') {
+                data.warehouse_location = formData.get('warehouse_location');
+            }
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show success message
+                    messageDiv.className = 'auth-message success';
+                    messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> Account created successfully! Redirecting to login...';
+                    messageDiv.style.display = 'block';
+                    
+                    // Redirect to login page
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    // Show error message
+                    messageDiv.className = 'auth-message error';
+                    if (response.status === 409) {
+                        messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email already registered. Please sign in from the login page.';
+                    } else {
+                        messageDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${result.msg || 'Registration failed. Please try again.'}`;
+                    }
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                messageDiv.className = 'auth-message error';
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Network error. Please check your connection and try again.';
+                messageDiv.style.display = 'block';
+            } finally {
+                // Reset button state
+                button.classList.remove('loading');
+                button.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        });
+    </script>
+</body>
+</html>

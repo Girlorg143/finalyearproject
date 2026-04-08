@@ -1,0 +1,873 @@
+:root {
+    --primary-color: #2c7a7b;
+    --primary-dark: #2a6e6f;
+    --secondary-color: #ed8936;
+    --success-color: #48bb78;
+    --error-color: #f56565;
+    --warning-color: #ed8936;
+    --text-dark: #2d3748;
+    --text-light: #718096;
+    --bg-light: #f7fafc;
+    --bg-white: #ffffff;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+    --border-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.dashboard-header {
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Subtitle with Inline Actions */
+.subtitle-with-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Header Navigation Actions */
+.header-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Navigation Action Buttons - Microsoft Style */
+.nav-action-btn {
+    background: none;
+    border: none;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+    position: relative;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+.nav-action-btn:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+    text-decoration-color: var(--primary-color);
+    text-underline-offset: 2px;
+}
+
+.nav-action-btn:active {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Active state for navigation buttons */
+.nav-action-btn.active {
+    background: none;
+    color: var(--success-color);
+    text-decoration: underline;
+    text-decoration-color: var(--success-color);
+    text-underline-offset: 2px;
+}
+
+.nav-action-btn.active:hover {
+    color: var(--success-color);
+    text-decoration: underline;
+    text-decoration-color: var(--success-color);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.header-title h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+.header-title p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.logout-btn:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+}
+
+/* Main Content */
+.dashboard-main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Sections */
+.warehouse-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.warehouse-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.section-header-left h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-header-left h2 i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.section-header-left p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.section-header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Go to Dashboard Button */
+.go-to-dashboard-btn {
+    display: none; /* Hidden in main dashboard view */
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--bg-white);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+/* FORCE SHOW BUTTON */
+#salvageBatchesSection .go-to-dashboard-btn {
+    display: flex !important;
+}
+
+/* Override to show button in specific views */
+.go-to-dashboard-btn.show {
+    display: flex !important;
+}
+
+.go-to-dashboard-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.go-to-dashboard-btn:active {
+    transform: translateY(0);
+}
+
+/* Warehouse Environment Info */
+.environment-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.environment-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.environment-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.environment-item i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    width: 24px;
+    text-align: center;
+}
+
+.environment-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+.environment-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+/* Message */
+.msg {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+
+.msg.success {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #86efac;
+}
+
+.msg.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+
+.msg.warning {
+    background: #fffbeb;
+    color: #d97706;
+    border-color: #fcd34d;
+}
+
+/* Table Styles */
+.warehouse-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    table-layout: auto;
+    border: 1px solid var(--border-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.warehouse-table th {
+    background: #f3f4f6 !important;
+    padding: 0.875rem 0.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151 !important;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    height: auto;
+    line-height: 1.25;
+    vertical-align: middle;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+ .warehouse-section {
+     overflow-x: auto;
+ }
+
+ .warehouse-table {
+     min-width: 980px;
+ }
+
+.warehouse-table td {
+    padding: 0.875rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+    color: #374151 !important;
+    vertical-align: middle;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 60px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+/* FORCE FONT AND BACKGROUND CHANGES */
+.warehouse-table * {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+.warehouse-table th {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+.warehouse-table td {
+    color: #374151 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+
+/* Ensure header background extends full width */
+.warehouse-table thead {
+    background: #f3f4f6 !important;
+    width: 100% !important;
+    display: table-header-group !important;
+}
+
+.warehouse-table thead tr {
+    background: #f3f4f6 !important;
+    width: 100% !important;
+}
+.warehouse-table thead {
+    background: var(--bg-light) !important;
+    width: 100% !important;
+    display: table-header-group !important;
+}
+
+.warehouse-table thead tr {
+    background: var(--bg-light) !important;
+    width: 100% !important;
+}
+
+.warehouse-table thead th {
+    background: var(--bg-light) !important;
+    width: 100% !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important;
+}
+.warehouse-table tbody tr:nth-child(odd) {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.warehouse-table tbody tr:nth-child(odd):hover {
+    background: var(--bg-light);
+}
+
+/* Strict column widths for alignment - except Action column */
+.warehouse-table th:nth-child(1), .warehouse-table td:nth-child(1) { width: 70px; min-width: 70px; max-width: 70px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; }  /* Batch ID */
+.warehouse-table th:nth-child(2), .warehouse-table td:nth-child(2) { width: 90px; min-width: 90px; max-width: 90px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Crop */
+.warehouse-table th:nth-child(3), .warehouse-table td:nth-child(3) { width: 100px; min-width: 100px; max-width: 100px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Harvest Date */
+.warehouse-table th:nth-child(4), .warehouse-table td:nth-child(4) { width: 130px; min-width: 130px; max-width: 130px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Warehouse Entry Freshness */
+.warehouse-table th:nth-child(5), .warehouse-table td:nth-child(5) { width: 130px; min-width: 130px; max-width: 130px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Predicted Freshness */
+.warehouse-table th:nth-child(6), .warehouse-table td:nth-child(6) { width: 80px; min-width: 80px; max-width: 80px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Risk Status */
+.warehouse-table th:nth-child(7), .warehouse-table td:nth-child(7) { width: 100px; min-width: 100px; max-width: 100px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Remaining Safe Days */
+.warehouse-table th:nth-child(8), .warehouse-table td:nth-child(8) { width: 100px; min-width: 100px; max-width: 100px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Required Storage */
+.warehouse-table th:nth-child(9), .warehouse-table td:nth-child(9) { width: 120px; min-width: 120px; max-width: 120px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Alerts */
+.warehouse-table th:nth-child(10), .warehouse-table td:nth-child(10) { width: 150px; min-width: 150px; max-width: 150px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Recommendation */
+.warehouse-table th:nth-child(11), .warehouse-table td:nth-child(11) { width: auto; min-width: 180px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif !important; } /* Action */
+
+/* Alerts column - vertical stacking */
+.warehouse-table td:nth-child(9) {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    padding: 0.5rem;
+    vertical-align: middle;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+ .warehouse-table td:nth-child(9) .alert-badge,
+ .warehouse-table td:nth-child(9) span {
+     display: inline-block;
+     max-width: 100%;
+ }
+
+ .warehouse-table td:nth-child(10) {
+     overflow: visible;
+     text-overflow: clip;
+     white-space: normal;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .warehouse-table td:nth-child(10) .action-btn {
+     min-width: auto;
+     margin: 0;
+ }
+
+/* Remaining Safe Days - center alignment */
+.warehouse-table td:nth-child(7) {
+    text-align: center;
+    vertical-align: middle;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Action column - button alignment */
+.warehouse-table td:nth-child(11) {
+    text-align: right;
+    vertical-align: middle;
+    padding: 0.5rem;
+    white-space: nowrap;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+ .warehouse-table td:nth-child(11) {
+     display: table-cell;
+ }
+
+.action-btn-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    overflow: visible;
+}
+
+ .warehouse-table td:nth-child(11) {
+     overflow: visible !important;
+     text-overflow: clip !important;
+     white-space: nowrap !important;
+     max-width: none !important;
+     width: auto !important;
+ }
+
+ .action-btn-row .action-btn {
+    flex: 0 0 auto;
+    min-width: auto !important;
+    max-width: none !important;
+}
+
+ .warehouse-table td:nth-child(11) .action-btn {
+    margin: 0;
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    display: inline-block !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    padding: 0.5rem 1rem !important;
+}
+
+/* Action buttons styling */
+.action-btn {
+    display: inline-block;
+    margin: 0.25rem 0.25rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    background: var(--bg-white);
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: auto;
+    padding: 0.5rem 1rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.action-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Row spacing and dividers */
+.warehouse-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.warehouse-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+/* Guidance row styling - grouped with crop */
+.warehouse-table tbody tr:nth-child(even) {
+    background: var(--bg-white);
+}
+
+.warehouse-table tbody tr:nth-child(even) td[colspan] {
+    background: var(--bg-white);
+    padding: 0;
+    border-bottom: 2px solid var(--border-color);
+    height: auto;
+}
+
+.warehouse-table tbody tr:nth-child(even) td[colspan]:hover {
+    background: var(--bg-white);
+}
+
+/* Crop grouping - add visual separation between crops */
+.warehouse-table tbody tr:nth-child(odd) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.warehouse-table tbody tr:nth-child(odd):hover {
+    background: var(--bg-light);
+}
+
+/* Action column - ensure enough width for Emergency Dispatch button */
+.warehouse-table td:nth-child(6),
+.warehouse-table td:nth-child(9) {
+    width: auto !important;
+    min-width: 200px !important;
+    max-width: none !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+}
+
+.warehouse-table td:nth-child(6) .action-btn,
+.warehouse-table td:nth-child(9) .action-btn {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: none !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    padding: 0.5rem 1rem !important;
+}
+
+/* Alert Badges - Updated for better wrapping */
+.alert-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.2;
+    margin: 1px;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.alert-badge.high {
+    background: var(--error-color);
+}
+
+.alert-badge.medium {
+    background: var(--warning-color);
+}
+
+.alert-badge.low {
+    background: var(--text-light);
+}
+
+.alert-badge.success {
+    background: var(--success-color);
+}
+
+/* Override inline alert styles from JavaScript */
+.warehouse-table td span[style*="background:#ef4444"] {
+    background: var(--error-color) !important;
+    color: white !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    margin: 1px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    max-width: 100% !important;
+    display: inline-block !important;
+}
+
+/* Guidance Panel - Professional UI Style */
+.guidance-panel {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    background: var(--bg-light);
+    max-width: 100%;
+    margin: 0.5rem 0;
+}
+
+.guidance-panel.safe {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.guidance-panel.medium {
+    background: #fffbeb;
+    border-color: #fcd34d;
+}
+
+.guidance-panel.high {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+.guidance-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+}
+
+.guidance-content {
+    color: var(--text-dark);
+    font-size: 0.875rem;
+}
+
+/* Override inline guidance styles from JavaScript */
+.warehouse-table tr + tr td div[style*="background:rgba"] {
+    background: var(--bg-light) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    max-width: 100% !important;
+}
+
+.warehouse-table tr + tr td div[style*="font-weight:800"] {
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    color: var(--text-dark) !important;
+}
+
+.warehouse-table tr + tr td div[style*="color:#e5e7eb"] {
+    color: var(--text-dark) !important;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    margin: 2px;
+}
+
+.action-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.action-btn.secondary {
+    background: var(--secondary-color);
+}
+
+.action-btn.secondary:hover {
+    background: #dd6b20;
+}
+
+.action-btn.danger {
+    background: var(--error-color);
+}
+
+.action-btn.danger:hover {
+    background: #e53e3e;
+}
+
+/* Selection States */
+tr[data-bid] {
+    transition: background-color 0.12s ease;
+    cursor: pointer;
+}
+
+tr[data-bid]:hover {
+    background: var(--bg-light);
+}
+
+tr.batch-row-selected {
+    background: #e6fffa;
+}
+
+tr.batch-row-selected td:first-child {
+    box-shadow: inset 4px 0 0 var(--primary-color);
+}
+
+/* Recommendation Panel */
+#panel_genai {
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: normal;
+    word-break: break-word;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Hide duplicate sections from main dashboard */
+#storedBatchesSection {
+    display: none !important;
+}
+
+#salvageBatchesSection {
+    display: none !important;
+}
+
+/* Show sections only when explicitly activated */
+#storedBatchesSection.active {
+    display: block !important;
+}
+
+#salvageBatchesSection.active {
+    display: block !important;
+}
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-left {
+        order: 2;
+    }
+
+    .header-right {
+        order: 1;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dashboard-main {
+        padding: 1rem;
+    }
+
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+
+    .environment-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .warehouse-table {
+        font-size: 0.875rem;
+    }
+
+    .warehouse-table th,
+    .warehouse-table td {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .action-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
+    }
+}

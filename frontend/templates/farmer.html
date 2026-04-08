@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard - Agri Supply Chain Management</title>
+    <link rel="stylesheet" href="/static/css/farmer.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/static/js/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="header-title">
+                    <h1 id="welcomeMessage" data-i18n="welcome">Welcome, Farmer</h1>
+                    <p data-i18n="dashboard">Farmer Dashboard</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <select id="langSelect" class="lang-selector" onchange="setLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                    <option value="te">తెలుగు (Telugu)</option>
+                    <option value="ta">தமிழ் (Tamil)</option>
+                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                </select>
+                <button class="stored-batches-btn" onclick="toggleStoredBatchesView()">
+                    <i class="fas fa-warehouse"></i>
+                    <span data-i18n="storedBatches">Stored Batches</span>
+                </button>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span data-i18n="logout">Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-card">
+                <!-- Submit Batch Section -->
+                <section class="submit-batch-section" id="submitBatchSection">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-plus-circle"></i>
+                            <span data-i18n="submitBatch">Submit Batch</span>
+                        </h2>
+                        <p data-i18n="addCropDetails">Add your crop details to the supply chain</p>
+                    </div>
+                    
+                    <form id="batchForm" class="batch-form">
+                        <!-- Crop Selection -->
+                        <div class="form-group">
+                            <label for="cropSelect">
+                                <i class="fas fa-leaf"></i>
+                                <span data-i18n="selectCropName">Select Crop Name</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <select name="crop_type" id="cropSelect" required>
+                                    <option value="" data-i18n="selectCrop">Select Crop</option>
+                                </select>
+                            </div>
+                            <div id="crop_type_error" class="form-message"></div>
+                            <div id="shelf_life_info" class="form-message" style="color: #64748b; font-size: 0.9rem; margin-top: 4px;"></div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-weight"></i>
+                                <span data-i18n="quantity">Quantity</span>
+                            </label>
+                            <div class="quantity-group">
+                                <div class="input-wrapper">
+                                    <input name="quantity" type="number" min="0" step="0.01" placeholder="Enter quantity" data-i18n-placeholder="enterQuantity" required>
+                                </div>
+                                <div class="input-wrapper unit-wrapper">
+                                    <input name="quantity_unit" id="quantity_unit" value="kg" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Harvest Date -->
+                        <div class="form-group">
+                            <label for="harvest_date">
+                                <i class="fas fa-calendar"></i>
+                                <span data-i18n="harvestDate">Harvest Date</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input id="harvest_date" name="harvest_date" type="date" required>
+                            </div>
+                            <div id="harvest_date_error" class="form-message"></div>
+                        </div>
+
+                        <!-- City Selection -->
+                        <div class="form-group">
+                            <label for="citySelect">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span data-i18n="selectCity">Select City</span>
+                            </label>
+                            <div class="city-group">
+                                <div class="input-wrapper">
+                                    <select name="location" id="citySelect" required>
+                                        <option value="" data-i18n="selectCity">Select City</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="openMaps" class="maps-btn">
+                                    <i class="fas fa-map"></i>
+                                    <span data-i18n="openInMaps">Open in Maps</span>
+                                </button>
+                            </div>
+                            <div id="location_error" class="form-message"></div>
+                        </div>
+
+                        <!-- Warehouse Selection -->
+                        <div class="form-group">
+                            <label for="warehouseSelect">
+                                <i class="fas fa-warehouse"></i>
+                                <span data-i18n="selectWarehouse">Select Warehouse</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <select name="warehouse" id="warehouseSelect">
+                                    <option value="" data-i18n="selectWarehouse">Select Warehouse</option>
+                                    <option value="Delhi Warehouse" data-display="Delhi Warehouse (DRY)">Delhi Warehouse (DRY)</option>
+                                    <option value="Chandigarh Warehouse" data-display="Chandigarh Warehouse (COLD)">Chandigarh Warehouse (COLD)</option>
+                                    <option value="Nagpur Central Warehouse" data-display="Nagpur Central Warehouse (DRY+COLD)">Nagpur Central Warehouse (DRY+COLD)</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="warehouse_hidden" id="warehouse_hidden" value="">
+                            <div id="warehouse_info" class="form-message"></div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span data-i18n="submit">Submit Batch</span>
+                        </button>
+                        <div id="submitMsg" class="form-message"></div>
+                    </form>
+                </section>
+
+                <!-- Submitted Batch Details Section (Hidden by default) -->
+                <section class="submitted-batch-section" id="submittedBatchSection" style="display: none;">
+                    <div class="section-header">
+                        <h2>
+                            <i class="fas fa-check-circle"></i>
+                            <span data-i18n="submittedBatchDetails">Submitted Batch Details</span>
+                        </h2>
+                        <p data-i18n="recentlySubmitted">Recently submitted batch information</p>
+                    </div>
+
+                    <div class="submitted-batch-card">
+                        <div class="success-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span data-i18n="batchSubmittedSuccess">Batch submitted successfully</span>
+                        </div>
+                        
+                        <div class="submitted-batches-table-container">
+                            <table class="stored-batches-table" id="submittedBatchTable">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="batchId">Batch ID</th>
+                                        <th data-i18n="crop">Crop</th>
+                                        <th data-i18n="quantity">Quantity</th>
+                                        <th data-i18n="harvestDateCol">Harvest Date</th>
+                                        <th data-i18n="daysSinceHarvest">Days Since Harvest</th>
+                                        <th data-i18n="freshnessScore">Freshness (0-1)</th>
+                                        <th data-i18n="farmerRiskStatus">Farmer Risk Status</th>
+                                        <th data-i18n="alerts">Alerts</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="submittedBatchTableBody">
+                                    <!-- Submitted batch row will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Your Batches Section -->
+                <section class="batches-section" id="batchesSection">
+                    <!-- Batches Table -->
+                    <div class="table-container">
+                        <table id="batches" class="batches-table"></table>
+                    </div>
+                </section>
+
+                <!-- Stored Batches Section (Hidden by default) -->
+                <section class="stored-batches-section" id="storedBatchesSection" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-header-left">
+                            <h2>
+                                <i class="fas fa-warehouse"></i>
+                                <span data-i18n="storedCropDetails">Stored Crop Details</span>
+                            </h2>
+                            <p data-i18n="viewStoredCropBatches">View your stored crop batches and their current status</p>
+                        </div>
+                        <div class="section-header-right">
+                            <button class="back-btn" onclick="toggleMainView()">
+                                <i class="fas fa-arrow-left"></i>
+                                <span data-i18n="backToDashboard">Back to Dashboard</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stored Batches Table -->
+                    <div class="table-container">
+                        <table id="storedBatchesTable" class="stored-batches-table"></table>
+                    </div>
+
+                    <!-- Stored Batch Details Panel -->
+                    <div class="stored-batch-details" id="storedBatchDetails" style="display: none;">
+                        <h3>Selected Stored Batch Details</h3>
+                        <div id="storedBatchPanels">
+                            <div id="storedBatchEmptyState" class="empty-state" data-i18n="selectBatchToView">Select a batch from the table to view details.</div>
+                            
+                            <div class="batch-details-grid">
+                                <div class="detail-card">
+                                    <h4>
+                                        <i class="fas fa-chart-pie"></i>
+                                        <span data-i18n="cropOverview">Crop Overview</span>
+                                    </h4>
+                                    <div id="stored_panel_overview" class="detail-content"></div>
+                                </div>
+                                <div class="detail-card">
+                                    <h4>
+                                        <i class="fas fa-tint"></i>
+                                        <span data-i18n="freshnessPanel">Freshness</span>
+                                    </h4>
+                                    <div id="stored_panel_freshness" class="detail-content"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="batch-details-grid">
+                                <div class="detail-card">
+                                    <h4>
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span data-i18n="alertsPanel">Alerts</span>
+                                    </h4>
+                                    <div id="stored_panel_alerts" class="detail-content"></div>
+                                </div>
+                                <div class="detail-card">
+                                    <h4>
+                                        <i class="fas fa-warehouse"></i>
+                                        <span data-i18n="warehouseInfo">Warehouse Info</span>
+                                    </h4>
+                                    <div id="stored_panel_warehouse" class="detail-content"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card full-width">
+                                <h4>
+                                    <i class="fas fa-robot"></i>
+                                    <span data-i18n="aiRecommendation">AI Recommendation</span>
+                                </h4>
+                                <div id="stored_panel_genai" class="detail-content"></div>
+                            </div>
+                            
+                            <div class="batch-actions">
+                                <button type="button" id="btnRequestPickupStored" class="action-btn primary">
+                                    <i class="fas fa-truck"></i>
+                                    <span data-i18n="requestPickup">Request Pickup</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+<script src="/static/js/farmer_translations.js"></script>
+<script src="/static/js/ai_recommendation_translator.js"></script>
+<script src="/static/js/farmer.js"></script>
+<script>
+// Unified dropdown handler with translations
+document.addEventListener('DOMContentLoaded', function() {
+    const citySelect = document.getElementById('citySelect');
+    const warehouseSelect = document.getElementById('warehouseSelect');
+    const warehouseInfo = document.getElementById('warehouse_info');
+    
+    // All Indian cities from dataset
+    const cities = [
+        "Agra", "Ahmedabad", "Aligarh", "Amritsar", "Asansol", "Aurangabad", 
+        "Bengaluru", "Bhopal", "Bhubaneswar", "Bikaner", "Chandigarh", "Chennai",
+        "Coimbatore", "Cuttack", "Dehradun", "Delhi", "Dhanbad", "Faridabad",
+        "Ghaziabad", "Gorakhpur", "Guntur", "Gurugram", "Guwahati", "Gwalior",
+        "Howrah", "Hyderabad", "Indore", "Jabalpur", "Jaipur", "Jalandhar",
+        "Jammu", "Jamshedpur", "Jhansi", "Jodhpur", "Kanpur", "Kochi", "Kolkata",
+        "Kota", "Kozhikode", "Kurnool", "Lucknow", "Ludhiana", "Madurai",
+        "Mangaluru", "Meerut", "Moradabad", "Mumbai", "Mysuru", "Nagpur",
+        "Nashik", "Nellore", "Noida", "Patna", "Puducherry", "Pune", "Raipur",
+        "Rajkot", "Ranchi", "Salem", "Shimla", "Siliguri", "Solapur", "Srinagar",
+        "Surat", "Thane", "Thiruvananthapuram", "Tiruchirappalli", "Udaipur",
+        "Ujjain", "Vadodara", "Varanasi", "Vijayawada", "Visakhapatnam"
+    ];
+    
+    // Populate city dropdown with translations
+    function populateCities() {
+        const lang = localStorage.getItem('farmer_lang') || 'en';
+        citySelect.innerHTML = `<option value="">${getText('selectCity', lang)}</option>`;
+        cities.sort().forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = translateCityName(city, lang);
+            citySelect.appendChild(option);
+        });
+    }
+    
+    // Populate warehouse dropdown with translations
+    function populateWarehouses(warehouses) {
+        const lang = localStorage.getItem('farmer_lang') || 'en';
+        warehouseSelect.innerHTML = `<option value="">${getText('selectWarehouse', lang)}</option>`;
+        warehouses.forEach(warehouse => {
+            const option = document.createElement('option');
+            option.value = warehouse.name;
+            const storageType = warehouse.storage_type || getStorageType(warehouse.name);
+            const displayName = storageType ? `${warehouse.name} (${storageType})` : warehouse.name;
+            option.textContent = translateWarehouseName(displayName, lang);
+            warehouseSelect.appendChild(option);
+        });
+    }
+    
+    // Get storage type for warehouse
+    function getStorageType(name) {
+        const map = {
+            'Delhi Warehouse': 'DRY',
+            'Chandigarh Warehouse': 'COLD',
+            'Nagpur Central Warehouse': 'DRY+COLD',
+            'Bengaluru Warehouse': 'DRY+COLD',
+            'Hyderabad Warehouse': 'DRY+COLD',
+            'Kolkata Warehouse': 'DRY+COLD',
+            'Bhubaneswar Warehouse': 'DRY',
+            'Mumbai Warehouse': 'DRY+COLD',
+            'Ahmedabad Warehouse': 'DRY'
+        };
+        return map[name] || 'DRY';
+    }
+    
+    // City change handler
+    citySelect.addEventListener('change', async function() {
+        const city = this.value;
+        if (!city) {
+            const lang = localStorage.getItem('farmer_lang') || 'en';
+            warehouseSelect.innerHTML = `<option value="">${getText('selectCityFirst', lang)}</option>`;
+            warehouseSelect.disabled = true;
+            warehouseInfo.textContent = '';
+            return;
+        }
+        
+        // Show loading
+        const lang = localStorage.getItem('farmer_lang') || 'en';
+        warehouseSelect.innerHTML = `<option value="">${getText('loading', lang) || 'Loading...'}</option>`;
+        warehouseSelect.disabled = true;
+        
+        try {
+            const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+            const response = await fetch(`/api/farmer/warehouses?city=${encodeURIComponent(city)}`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const warehouses = data.warehouses || data.nearest_warehouses || [];
+                populateWarehouses(warehouses);
+                warehouseSelect.disabled = false;
+                warehouseInfo.textContent = '';
+            } else {
+                throw new Error('Failed to load');
+            }
+        } catch (error) {
+            // Fallback warehouses
+            const fallbacks = [
+                {name: 'Delhi Warehouse', capacity: 'High'},
+                {name: 'Chandigarh Warehouse', capacity: 'Medium'},
+                {name: 'Nagpur Central Warehouse', capacity: 'Very High'}
+            ];
+            populateWarehouses(fallbacks);
+            warehouseSelect.disabled = false;
+        }
+    });
+    
+    // Warehouse selection handler
+    warehouseSelect.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        const hidden = document.getElementById('warehouse_hidden');
+        if (hidden) hidden.value = this.value;
+        
+        const lang = localStorage.getItem('farmer_lang') || 'en';
+        if (selected && selected.value) {
+            warehouseInfo.textContent = `${getText('selected', lang)}: ${selected.textContent}`;
+        } else {
+            warehouseInfo.textContent = '';
+        }
+    });
+    
+    // Initialize
+    populateCities();
+    
+    // Make refresh function globally available
+    window.refreshDropdowns = function() {
+        console.log('Refreshing dropdowns with lang:', localStorage.getItem('farmer_lang'));
+        populateCities();
+        // Reset warehouse dropdown
+        const lang = localStorage.getItem('farmer_lang') || 'en';
+        warehouseSelect.innerHTML = `<option value="">${getText('selectCityFirst', lang)}</option>`;
+        warehouseSelect.disabled = true;
+    };
+    
+    // Listen for language changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'farmer_lang') {
+            console.log('Language changed to:', e.newValue);
+            refreshDropdowns();
+        }
+    });
+});
+
+// Update welcome message
+document.addEventListener('DOMContentLoaded', function() {
+    const welcomeEl = document.getElementById('welcomeMessage');
+    if (welcomeEl) {
+        const userData = localStorage.getItem('user_data');
+        let userName = 'Farmer';
+        if (userData) {
+            try {
+                const user = JSON.parse(userData);
+                userName = user.name || user.email || 'Farmer';
+            } catch (e) {
+                const email = localStorage.getItem('user_email') || 'Farmer';
+                userName = email.split('@')[0];
+            }
+        } else {
+            const email = localStorage.getItem('user_email') || 'Farmer';
+            userName = email.split('@')[0];
+        }
+        welcomeEl.textContent = `Welcome, ${userName}`;
+    }
+});
+
+// Logout
+function handleLogout() {
+    localStorage.clear();
+    window.location.href = '/login';
+}
+</script>
+</body>
+</html>
