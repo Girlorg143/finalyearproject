@@ -2,6 +2,10 @@ import os
 import sys
 from pathlib import Path
 
+# Load environment variables FIRST before any other imports
+from dotenv import load_dotenv
+load_dotenv()  # MUST be before importing anything that uses env vars
+
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
@@ -9,7 +13,6 @@ if str(_ROOT) not in sys.path:
 try:
     from flask import Flask, jsonify, render_template
     from flask_cors import CORS
-    from dotenv import load_dotenv
     from sqlalchemy import text
     from backend.extensions import db, migrate, bcrypt, jwt
     from backend.config import Config
@@ -34,15 +37,7 @@ except Exception:
         pass
     raise
 
-load_dotenv()   # MUST be before os.getenv()
-
-print("API KEY:", os.getenv("OPENWEATHER_API_KEY"))
-
-
-
 def create_app():
-    # Ensure .env values override any existing env vars from prior runs
-    load_dotenv(override=True)
     app = Flask(__name__, static_folder="../frontend/static", template_folder="../frontend/templates")
     # Load defaults from Config then force DB URI from env AFTER dotenv has loaded
     app.config.from_object(Config())
