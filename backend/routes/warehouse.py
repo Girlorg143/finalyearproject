@@ -607,16 +607,7 @@ def dashboard():
                 
                 # Decay rate per hour for display
                 decay_rate_per_hour = base_decay_per_hour * stress_multiplier
-
-                # Simple freshness-based risk status
-                if wh_fresh > 0.50:
-                    risk_status = "SAFE"
-                elif wh_fresh > 0.30:
-                    risk_status = "RISK"
-                else:
-                    risk_status = "HIGH"
-                b.status = risk_status
-                db.session.add(b)
+                
                 dirty = True
 
                 alerts = list(pred_alerts)
@@ -625,15 +616,28 @@ def dashboard():
                 storage_compatibility = "Compatible" if ("Temperature outside optimal range" not in alerts and "Humidity outside optimal range" not in alerts and "Storage incompatible for crop" not in alerts) else "Not Compatible"
 
                 # Remaining safe days: derived from CURRENT warehouse freshness.
-                remaining_safe_days = 0.0
-                spoilage_threshold = 0.30
+                # Constants
+                spoilage_threshold = 0.30  # 30%
+                critical_threshold = 0.25  # 25%
                 
-                # If freshness is already at or below threshold, no safe days remain
-                if wh_fresh <= spoilage_threshold:
+                # Step 1: Adjust daily_decay based on environmental conditions
+                adjusted_daily_decay = daily_decay
+                if env_temp > opt_t:
+                    adjusted_daily_decay = daily_decay * 1.20  # +20% for high temp
+                if env_hum > opt_h:
+                    adjusted_daily_decay = adjusted_daily_decay * 1.10  # +10% for high humidity
+                
+                # Step 2: Calculate remaining safe days
+                remaining_safe_days = 0.0
+                if wh_fresh <= critical_threshold:
+                    # Below critical threshold - no safe days
                     remaining_safe_days = 0.0
-                elif daily_decay > 0.0:
+                elif wh_fresh <= spoilage_threshold:
+                    # Near spoilage - grace buffer of 0.5 days for handling
+                    remaining_safe_days = 0.5
+                elif adjusted_daily_decay > 0.0:
                     try:
-                        wh_remaining = (float(wh_fresh) - float(spoilage_threshold)) / float(daily_decay)
+                        wh_remaining = (float(wh_fresh) - float(spoilage_threshold)) / float(adjusted_daily_decay)
                         if wh_remaining is not None and isinstance(wh_remaining, float) and math.isfinite(wh_remaining):
                             remaining_safe_days = float(round(float(wh_remaining), 2))
                         else:
@@ -643,6 +647,21 @@ def dashboard():
                 else:
                     # If no decay, use shelf life as remaining days
                     remaining_safe_days = float(shelf_days) if shelf_days > 0 else 0.0
+                
+                # Step 3: Ensure non-negative
+                remaining_safe_days = max(0.0, remaining_safe_days)
+                
+                # Step 4: Risk classification based on remaining days
+                if remaining_safe_days == 0:
+                    risk_status = "HIGH"
+                elif remaining_safe_days <= 1:
+                    risk_status = "MEDIUM"
+                else:
+                    risk_status = "LOW"
+                
+                # Update batch status
+                b.status = risk_status
+                db.session.add(b)
 
                 # Set recommendation based on remaining days
                 if remaining_safe_days <= 0:
