@@ -1281,18 +1281,16 @@ async function loadInTransit(){
   }
 }
 
+// Auto-polling only - functions are called by showXxx() when tabs switch
 if(document.getElementById('inTransit')){
-  loadInTransit();
   setInterval(loadInTransit, 20000);
 }
 
 if(document.getElementById('deliveredShipments')){
-  loadDeliveredShipments();
   setInterval(loadDeliveredShipments, 30000);
 }
 
 if(document.getElementById('emergencyRequired')){
-  loadEmergencyRequired();
   setInterval(loadEmergencyRequired, 20000);
 }
 
