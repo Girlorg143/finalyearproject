@@ -38,7 +38,14 @@ except Exception:
     raise
 
 def create_app():
-    app = Flask(__name__, static_folder="../frontend/static", template_folder="../frontend/templates")
+    # Determine paths based on environment
+    base_dir = Path(__file__).resolve().parent.parent
+    static_folder = base_dir / "frontend" / "static"
+    template_folder = base_dir / "frontend" / "templates"
+    
+    app = Flask(__name__, 
+                static_folder=str(static_folder),
+                template_folder=str(template_folder))
     # Load defaults from Config then force DB URI from env AFTER dotenv has loaded
     app.config.from_object(Config())
 
