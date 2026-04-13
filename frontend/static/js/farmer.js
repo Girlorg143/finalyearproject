@@ -345,8 +345,8 @@ async function loadBatches(){
       const dsh = (b && typeof b.days_since_harvest === 'number') ? b.days_since_harvest : '';
       const fresh = (b && typeof b.freshness_score === 'number') ? b.freshness_score : null;
       const freshText = (typeof fresh === 'number' && Number.isFinite(fresh)) ? `${Math.max(0, Math.min(1, fresh)).toFixed(2)}` : '';
-      const cropSeasons = (b && Array.isArray(b.crop_seasons)) ? b.crop_seasons : [];
-      const translatedSeason = cropSeasons.length ? translateSeasonName(cropSeasons[0], _currentLang) : '';
+      const batchSeason = (b && b.batch_season) ? String(b.batch_season) : '';
+      const translatedSeason = batchSeason ? translateSeasonName(batchSeason, _currentLang) : '';
       const seasonBadge = translatedSeason
         ? ` <span style="background:#334155;color:white;padding:1px 6px;border-radius:999px;font-size:11px">${translatedSeason}</span>`
         : '';
@@ -461,8 +461,8 @@ function renderPanels(b){
   if(typeof rem === 'number' && Number.isFinite(rem) && rem < 0) rem = 0;
   const remText = (typeof rem === 'number' && Number.isFinite(rem)) ? `${Math.round(rem)} days` : '';
   const seasonalRisk = !!(b && b.seasonal_risk);
-  const cropSeasons = (b && Array.isArray(b.crop_seasons)) ? b.crop_seasons : [];
-  const primarySeason = cropSeasons.length ? String(cropSeasons[0]||'') : '';
+  const batchSeason = (b && b.batch_season) ? String(b.batch_season) : '';
+  const primarySeason = batchSeason;
   const currentSeason = (b && b.current_season) ? String(b.current_season) : '';
   const inSeason = (typeof (b && b.in_season) === 'boolean') ? !!b.in_season : !seasonalRisk;
   const seasonalWarning = (b && b.seasonal_warning) ? String(b.seasonal_warning) : '';
@@ -988,8 +988,8 @@ async function loadStoredBatches() {
       const dsh = (b && typeof b.days_since_harvest === 'number') ? b.days_since_harvest : '';
       const fresh = (b && typeof b.freshness_score === 'number') ? b.freshness_score : null;
       const freshText = (typeof fresh === 'number' && Number.isFinite(fresh)) ? `${Math.max(0, Math.min(1, fresh)).toFixed(2)}` : '';
-      const cropSeasons = (b && Array.isArray(b.crop_seasons)) ? b.crop_seasons : [];
-      const translatedSeason = cropSeasons.length ? translateSeasonName(cropSeasons[0], _currentLang) : '';
+      const batchSeason = (b && b.batch_season) ? String(b.batch_season) : '';
+      const translatedSeason = batchSeason ? translateSeasonName(batchSeason, _currentLang) : '';
       const seasonBadge = translatedSeason
         ? ` <span style="background:#334155;color:white;padding:1px 6px;border-radius:999px;font-size:11px">${translatedSeason}</span>`
         : '';

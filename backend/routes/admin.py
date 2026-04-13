@@ -125,7 +125,7 @@ def dashboard_batches():
     if warehouse:
         query = query.filter_by(warehouse=warehouse)
     if risk_level:
-        if risk_level == 'HIGH':
+        if risk_level == 'HIGH' or 'HIGH RISK':
             query = query.filter(CropBatch.freshness_score < 0.3)
         elif risk_level == 'RISK':
             query = query.filter(CropBatch.freshness_score.between(0.3, 0.7))

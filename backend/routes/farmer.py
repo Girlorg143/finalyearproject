@@ -57,8 +57,9 @@ def request_pickup(batch_id: int):
         days_since_harvest = 0
 
     crop = getattr(b, "crop_type", "") or ""
+    harvest_date = getattr(b, "harvest_date", None)
     try:
-        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop) or 1.0)
+        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop, harvest_date) or 1.0)
     except Exception:
         base_shelf_life_days = 1.0
     if base_shelf_life_days <= 0.0:
@@ -181,7 +182,7 @@ def _risk_status_from_freshness(f: float) -> str:
         return "SAFE"
     if float(f) >= 0.40:
         return "RISK"
-    return "HIGH"
+    return "HIGH RISK"
 
 
 
@@ -192,6 +193,7 @@ _CROP_META_CACHE = {"mtime": None, "values": {}}
 def _crop_meta_path() -> str:
     corrected = _dataset_path("crop_freshness_shelf_life_seasonal_corrected.csv")
     seasonal = _dataset_path("crop_freshness_shelf_life_seasonal.csv")
+    base = _dataset_path("crop_freshness_shelf_life.csv")
     if os.path.exists(corrected):
         return corrected
     if os.path.exists(seasonal):
@@ -402,11 +404,42 @@ def _weather_readings_for_city(city: str, _cache: dict) -> dict:
         return out
 
 
-def _base_shelf_life_days_for_crop(crop: str) -> float:
+def _base_shelf_life_days_for_crop(crop: str, harvest_date=None) -> float:
+    """Get season-specific shelf life for a crop based on harvest date."""
     meta = _get_crop_meta()
     rows = meta.get(str(crop or "").strip().lower(), [])
     if not rows:
         return 1.0
+    
+    # Determine season from harvest date
+    season = ""
+    if harvest_date:
+        try:
+            month = int(getattr(harvest_date, "month", 0) or 0)
+            season = _season_label_for_month(month)
+        except Exception:
+            season = ""
+    
+    # If no season determined, fall back to max across all seasons
+    if not season:
+        try:
+            v = max([float(r.get("max_days") or 0.0) for r in rows])
+            if v > 0.0:
+                return float(v)
+        except Exception:
+            pass
+        return 1.0
+    
+    # Find shelf life for specific season
+    season_lower = season.lower()
+    for row in rows:
+        row_season = str(row.get("season", "") or "").strip().lower()
+        if row_season == season_lower:
+            max_days = float(row.get("max_days") or 0.0)
+            if max_days > 0.0:
+                return float(max_days)
+    
+    # If no match for this season, fall back to max
     try:
         v = max([float(r.get("max_days") or 0.0) for r in rows])
         if v > 0.0:
@@ -649,14 +682,13 @@ def submit_batch():
         except Exception:
             dist_km = 0.0
 
-        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop) or 1.0)
+        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop, harvest_date) or 1.0)
         if base_shelf_life_days <= 0.0:
             base_shelf_life_days = 1.0
 
         weather_cache = {}
         w = _weather_readings_for_city(city, weather_cache)
         weather_summary = str((w or {}).get("summary") or "")
-
         days_since_harvest = 0
         try:
             days_since_harvest = int((current_date - (harvest_date or current_date)).days)
@@ -777,7 +809,7 @@ def farmer_genai(batch_id: int):
     harvest_date = getattr(b, "harvest_date", None)
 
     try:
-        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop) or 1.0)
+        base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop, harvest_date) or 1.0)
     except Exception:
         base_shelf_life_days = 1.0
     if base_shelf_life_days <= 0.0:
@@ -901,7 +933,7 @@ def list_batches():
     try:
         claims = get_jwt() or {}
         farmer_id = int(claims.get("sub"))
-        batches = CropBatch.query.filter_by(farmer_id=farmer_id).all()
+        batches = CropBatch.query.filter_by(farmer_id=farmer_id).order_by(CropBatch.id.asc()).all()
         out = []
         today = datetime.now(timezone.utc).date()
         weather_cache = {}
@@ -958,8 +990,9 @@ def list_batches():
             except Exception:
                 dist_km = 0.0
             crop_for_life = getattr(b, "crop_type", "") or ""
+            harvest_date = getattr(b, "harvest_date", None)
             try:
-                base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop_for_life) or 1.0)
+                base_shelf_life_days = float(_base_shelf_life_days_for_crop(crop_for_life, harvest_date) or 1.0)
             except Exception:
                 base_shelf_life_days = 1.0
             if base_shelf_life_days <= 0.0:
@@ -1055,6 +1088,7 @@ def list_batches():
                 "seasonal_risk": bool(seasonal_risk),
                 "seasonal_warning": str(seasonal_warning or ""),
                 "crop_seasons": _season_labels_for_crop(getattr(b, "crop_type", "") or ""),
+                "batch_season": _season_label_for_month(int(getattr(b, "harvest_date", None) and getattr(b.harvest_date, "month", 0) or 0)),
                 "current_season": _season_label_for_today(),
                 "in_season": (not bool(seasonal_risk)),
                 "nearest_warehouse_distance_km": round(float(dist_km), 2),
